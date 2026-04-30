@@ -17,8 +17,8 @@ export const handler = async () => {
     },
   ],
   mode: "payment",
-  success_url: "http://localhost:8888/success",
-  cancel_url: "http://localhost:8888/cancel",
+  success_url: "http://atithiesydney.netlify.app/success",
+  cancel_url: "http://atithiesydney.netlify.app/cancel",
 });
 
 return {
