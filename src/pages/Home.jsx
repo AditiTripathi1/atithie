@@ -1,74 +1,47 @@
-import { useState } from "react";
 import { useSeats } from "../hooks/useSeats";
-import { createBankTransferBooking } from "../services/bookingService";
-import { DINNER_DATE, MEAL_PRICE } from "../utils/constants";
 import { handleStripeCheckout } from "../services/paymentService";
+import { DINNER_DATE, MEAL_PRICE } from "../utils/constants";
 
 export default function Home() {
   const { seatsLeft, loading } = useSeats(DINNER_DATE);
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-
-  async function handleBankTransfer() {
-    if (!name || !email) {
-      setMessage("Please enter your name and email.");
-      return;
-    }
-
+  function handlePayment() {
     if (seatsLeft <= 0) {
-      setMessage("Sorry, this dinner is sold out.");
+      alert("Sorry, this dinner is sold out.");
       return;
     }
 
-    await createBankTransferBooking({
-      name,
-      email,
-      date: DINNER_DATE,
-    });
-
-    setMessage(
-      "Seat reserved. Please transfer $65 to confirm your booking. Use your name as payment reference.",
-    );
-
-    setName("");
-    setEmail("");
+    handleStripeCheckout();
   }
 
   return (
     <div className="page">
-      <h1>🍽 Saturday Dinner</h1>
-      <p>Date: {DINNER_DATE}</p>
-      <p>Price: ${MEAL_PRICE}</p>
+      <div className="booking-card">
+        <p className="tag">Limited Saturday Dinner</p>
 
-      {loading ? <p>Loading seats...</p> : <p>Seats left: {seatsLeft}</p>}
+        <h1>Atithie Sydney</h1>
 
-      <input
-        placeholder="Your name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+        <p className="description">
+          A warm, home-style Indian dinner experience with limited seats.
+        </p>
 
-      <input
-        placeholder="Your email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+        <div className="details">
+          <p><strong>Date:</strong> {DINNER_DATE}</p>
+          <p><strong>Price:</strong> ${MEAL_PRICE}</p>
+          <p>
+            <strong>Seats left:</strong>{" "}
+            {loading ? "Loading..." : seatsLeft}
+          </p>
+        </div>
 
-      <br />
-      <button
-        onClick={handleStripeCheckout}
-        disabled={loading || seatsLeft <= 0}
-      >
-        Pay Now
-      </button>
-
-      <button onClick={handleBankTransfer} disabled={loading || seatsLeft <= 0}>
-        Reserve via Bank Transfer
-      </button>
-
-      {message && <p>{message}</p>}
+        <button
+          className="pay-button"
+          onClick={handlePayment}
+          disabled={loading || seatsLeft <= 0}
+        >
+          {seatsLeft <= 0 ? "Sold Out" : "Book Your Seat"}
+        </button>
+      </div>
     </div>
   );
 }

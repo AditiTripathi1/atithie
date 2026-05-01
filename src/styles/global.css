@@ -1,17 +1,66 @@
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
-  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #fff7ed;
 }
 
-button {
-  padding: 10px 16px;
-  margin: 5px;
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.booking-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  padding: 32px;
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+}
+
+.tag {
+  display: inline-block;
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+h1 {
+  margin: 16px 0 8px;
+  font-size: 36px;
+}
+
+.description {
+  color: #555;
+  line-height: 1.5;
+}
+
+.details {
+  margin: 24px 0;
+  background: #fff7ed;
+  padding: 16px;
+  border-radius: 16px;
+}
+
+.pay-button {
+  width: 100%;
+  border: none;
+  background: #111827;
+  color: white;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 16px;
   cursor: pointer;
 }
-input {
-  display: block;
-  width: 260px;
-  padding: 10px;
-  margin: 10px auto;
+
+.pay-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
 }
