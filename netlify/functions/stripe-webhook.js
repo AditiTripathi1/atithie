@@ -32,7 +32,7 @@ export const handler = async (event) => {
     await addDoc(collection(db, "bookings"), {
       name: session.customer_details?.name || "Guest",
       email: session.customer_details?.email,
-      date: "2026-05-02",
+      date:  session.metadata?.dinnerDate,
       status: "paid",
       paymentMethod: "stripe",
       createdAt: new Date(),

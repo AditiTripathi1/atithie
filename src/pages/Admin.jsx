@@ -4,8 +4,12 @@ import { db } from "../services/firebase";
 
 export default function Admin() {
   const [bookings, setBookings] = useState([]);
+  const [password, setPassword] = useState("");
+  const [isAllowed, setIsAllowed] = useState(false);
 
   useEffect(() => {
+        if (!isAllowed) return;
+
     async function fetchBookings() {
       const q = query(
         collection(db, "bookings"),
@@ -23,7 +27,37 @@ export default function Admin() {
     }
 
     fetchBookings();
-  }, []);
+  }, [isAllowed]);
+
+   if (!isAllowed) {
+  return (
+    <div className="page">
+      <div className="booking-card">
+        <h1>Admin Login</h1>
+
+        <input
+          type="password"
+          placeholder="Enter admin password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button
+          className="pay-button"
+          onClick={() => {
+            if (password === import.meta.env.VITE_ADMIN_PASSWORD) {
+              setIsAllowed(true);
+            } else {
+              alert("Wrong password");
+            }
+          }}
+        >
+          Login
+        </button>
+      </div>
+    </div>
+  );
+}
 
   return (
     <div style={{ padding: "20px" }}>
