@@ -3,10 +3,10 @@
 //const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
  
-export async function handleStripeCheckout(date) {
+export async function handleStripeCheckout(bookingData) {
   const res = await fetch("/.netlify/functions/create-checkout-session", {
     method: "POST",
-    body: JSON.stringify({ date }),
+    body: JSON.stringify(bookingData),
   });
 
   const data = await res.json();

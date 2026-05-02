@@ -1,66 +1,83 @@
 import Stripe from "stripe";
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { initializeApp, getApps } from "firebase/app";
+import { getFirestore, collection, addDoc, Timestamp } from "firebase/firestore";
 import { Resend } from "resend";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Firebase init (same config as frontend)
 const firebaseConfig = {
-  apiKey: "AIzaSyAxwDPra-7XWB4rIkU-sYY4DVJF4xpqiso",
-  authDomain: "dinner-booking-85218.firebaseapp.com",
-  projectId: "dinner-booking-85218",
+  apiKey: process.env.VITE_FIREBASE_API_KEY,
+  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
 };
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 export const handler = async (event) => {
-  const sig = event.headers["stripe-signature"];
+  try {
+    const signature = event.headers["stripe-signature"];
 
-  const stripeEvent = stripe.webhooks.constructEvent(
-    event.body,
-    sig,
-    process.env.STRIPE_WEBHOOK_SECRET
-  );
+    const stripeEvent = stripe.webhooks.constructEvent(
+      event.body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+if (stripeEvent.type === "checkout.session.completed") {
+  const session = stripeEvent.data.object;
 
-  if (stripeEvent.type === "checkout.session.completed") {
-    const session = stripeEvent.data.object;
+  const adults = Number(session.metadata?.adults || 0);
+  const kids = Number(session.metadata?.kids || 0);
+  const totalSeats = Number(session.metadata?.totalSeats || adults + kids || 1);
+  const dinnerDate = session.metadata?.dinnerDate;
 
-    // Save booking as PAID
-    await addDoc(collection(db, "bookings"), {
-      name: session.customer_details?.name || "Guest",
-      email: session.customer_details?.email,
-      date:  session.metadata?.dinnerDate,
-      status: "paid",
-      paymentMethod: "stripe",
-      createdAt: new Date(),
-    });
+  await addDoc(collection(db, "bookings"), {
+    experience: session.metadata?.experience || "Sohala",
 
-    // 📧 SEND EMAIL HERE
-  await resend.emails.send({
-    from: "Atithie Sydney <onboarding@resend.dev>",
-    to: [session.customer_details?.email],
-    subject: "Your dinner booking is confirmed 🍽️",
-    html: `
-      <h2>Booking Confirmed 🎉</h2>
-      <p>Hi ${session.customer_details?.name || "Guest"},</p>
+    name: `${session.metadata?.firstName || ""} ${
+      session.metadata?.lastName || ""
+    }`.trim(),
 
-      <p>Your seat for our Saturday dinner is confirmed.</p>
+    firstName: session.metadata?.firstName || "",
+    lastName: session.metadata?.lastName || "",
+    email: session.customer_details?.email || session.customer_email || "",
+    mobile: session.metadata?.mobile || "",
+    kidsAttending: session.metadata?.kidsAttending === "true",
 
-      <p><strong>Date:</strong> 2026-05-02</p>
-      <p><strong>Amount Paid:</strong> $${session.amount_total / 100}</p>
+    date: dinnerDate,
 
-      <p>We can’t wait to host you 💛</p>
+    adults,
+    kids,
+    totalSeats,
 
-      <p>– Atithie Sydney</p>
-    `,
+    groupNames: session.metadata?.groupNames || "",
+    dietaryRequirements: session.metadata?.dietaryRequirements || "",
+    cuisineRelationship: session.metadata?.cuisineRelationship || "",
+
+    kidsConfirmed: session.metadata?.kidsConfirmed === "true",
+    consent: session.metadata?.consent === "true",
+    cancellationPolicy: session.metadata?.cancellationPolicy === "true",
+
+    status: "paid",
+    paymentMethod: "stripe",
+    stripeSessionId: session.id,
+    amountTotal: session.amount_total,
+    currency: session.currency,
+    createdAt: Timestamp.now(),
   });
-  }
+}
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ received: true }),
-  };
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ received: true }),
+    };
+  } catch (error) {
+    console.error("Webhook error:", error.message);
+
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: error.message }),
+    };
+  }
 };
