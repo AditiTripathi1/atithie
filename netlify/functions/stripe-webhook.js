@@ -1,10 +1,8 @@
 import Stripe from "stripe";
 import { initializeApp, getApps } from "firebase/app";
 import { getFirestore, collection, addDoc, Timestamp } from "firebase/firestore";
-import { Resend } from "resend";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 const firebaseConfig = {
   apiKey: process.env.VITE_FIREBASE_API_KEY,

@@ -18,6 +18,15 @@ export default function BookingForm({ selectedDate, seatsLeft, loading }) {
     dietaryRequirements: "",
     cuisineRelationship: "",
     consent: false,
+    consentPrivate: false,
+consentContribution: false,
+consentKitchen: false,
+consentAllergy: false,
+consentBookingProcess: false,
+consentCancellation: false,
+consentPayment: false,
+consentMedia: false,
+consentAll: false,
     cancellationPolicy: false,
   });
 
@@ -41,6 +50,21 @@ export default function BookingForm({ selectedDate, seatsLeft, loading }) {
       alert("Please enter your email.");
       return false;
     }
+
+    if (
+  !form.consentPrivate ||
+  !form.consentContribution ||
+  !form.consentKitchen ||
+  !form.consentAllergy ||
+  !form.consentPayment ||
+  !form.consentMedia ||
+  !form.consentBookingProcess ||
+  !form.consentCancellation ||
+  !form.consentAll
+) {
+  alert("Please accept all required terms and conditions.");
+  return false;
+}
 
     if (!form.mobile.trim()) {
       alert("Please enter your mobile number.");
@@ -109,8 +133,8 @@ export default function BookingForm({ selectedDate, seatsLeft, loading }) {
 
   return (
     <div className="booking-form">
-      <p className="tag">Experience of this Supper Club</p>
-      <h2>Sohala</h2>
+      
+      {/* <h2>Sohala</h2> */}
 
       <p className="description">
         A festive feast inspired by traditional Maharashtrian celebrations,
@@ -236,23 +260,105 @@ export default function BookingForm({ selectedDate, seatsLeft, loading }) {
         </label>
       )}
 
-      <label className="checkbox-row">
-        <input
-          type="checkbox"
-          checked={form.consent}
-          onChange={(e) => updateField("consent", e.target.checked)}
-        />
-        I understand this is a home-hosted supper club experience.
-      </label>
+      <details className="consent-section">
+  <summary>Consent & Disclaimer *</summary>
+<div className="consent-content">
+  <label className="checkbox-row">
+    <input
+      type="checkbox"
+      checked={form.consentPrivate}
+      onChange={(e) => updateField("consentPrivate", e.target.checked)}
+    />
+    I understand this is a private, invitation-based home dining experience
+    and not a licensed restaurant or commercial food business.
+  </label>
 
-      <label className="checkbox-row">
-        <input
-          type="checkbox"
-          checked={form.cancellationPolicy}
-          onChange={(e) => updateField("cancellationPolicy", e.target.checked)}
-        />
-        I agree to the confirmation and cancellation policy.
-      </label>
+  <label className="checkbox-row">
+    <input
+      type="checkbox"
+      checked={form.consentContribution}
+      onChange={(e) => updateField("consentContribution", e.target.checked)}
+    />
+    I agree that the contribution covers ingredients and utilities only,
+    not commercial hospitality services.
+  </label>
+
+  <label className="checkbox-row">
+    <input
+      type="checkbox"
+      checked={form.consentKitchen}
+      onChange={(e) => updateField("consentKitchen", e.target.checked)}
+    />
+    I understand food is prepared in a domestic kitchen under NSW
+    low-risk home food guidelines.
+  </label>
+
+  <label className="checkbox-row">
+    <input
+      type="checkbox"
+      checked={form.consentAllergy}
+      onChange={(e) => updateField("consentAllergy", e.target.checked)}
+    />
+    I will inform the host of any allergies and accept risks of dining
+    in a home environment.
+  </label>
+
+  <label className="checkbox-row">
+    <input
+      type="checkbox"
+      checked={form.consentPayment}
+      onChange={(e) => updateField("consentPayment", e.target.checked)}
+    />
+    I agree to the $65 per person contribution for this experience.
+  </label>
+
+  <label className="checkbox-row">
+    <input
+      type="checkbox"
+      checked={form.consentMedia}
+      onChange={(e) => updateField("consentMedia", e.target.checked)}
+    />
+    I understand photos/videos may be taken and shared. I will inform the
+    host if I do not wish to be included.
+  </label>
+
+  <label className="checkbox-row">
+  <input
+    type="checkbox"
+    checked={form.consentBookingProcess}
+    onChange={(e) =>
+      updateField("consentBookingProcess", e.target.checked)
+    }
+  />
+   I understand that submitting this form does not confirm my seat.
+  Booking is confirmed only upon advance payment. Bookings are
+  non-changeable.
+</label>
+
+<label className="checkbox-row">
+  <input
+    type="checkbox"
+    checked={form.consentCancellation}
+    onChange={(e) =>
+      updateField("consentCancellation", e.target.checked)
+    }
+  />
+   I agree to the cancellation policy: Full refund if cancelled 7 days or
+  more before the event, 50% refund if cancelled 4–6 days prior, and no
+  refund if cancelled within 72 hours.
+</label>
+
+  <label className="checkbox-row highlight-checkbox">
+    <input
+      type="checkbox"
+      checked={form.consentAll}
+      onChange={(e) => updateField("consentAll", e.target.checked)}
+    />
+    On behalf of all attendees, I confirm that we understand and agree to all
+    the above terms and conditions.
+  </label>
+  </div>
+</details>
 
       <div className="details">
         <div>

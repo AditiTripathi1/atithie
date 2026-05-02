@@ -1,37 +1,65 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSeats } from "../hooks/useSeats";
 //import { handleStripeCheckout } from "../services/paymentService";
 import { DINNER_DATES } from "../utils/constants";
 import BookingForm from "./BookingForm";
+import { getActiveEvents } from "../services/eventService";
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(DINNER_DATES[0]);
-// const [seatCount, setSeatCount] = useState(1);
-  const { seatsLeft, loading } = useSeats(selectedDate);
+  const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  // const [seatCount, setSeatCount] = useState(1);
+  const { seatsLeft, loading } = useSeats(selectedEvent?.date);
 
-//   function handlePayment() {
-//     if (seatsLeft <= 0) {
-//       alert("Sorry, this dinner is sold out.");
-//       return;
-//     }
+  useEffect(() => {
+    async function fetchEvents() {
+      const data = await getActiveEvents();
+      console.log("events from Firebase:", data);
+      setEvents(data);
+      setSelectedEvent(data[0]); // default select first
+    }
 
-//     if (seatCount > seatsLeft) {
-//       alert(`Only ${seatsLeft} seats left for this date.`);
-//       return;
-//     }
+    fetchEvents();
+  }, []);
 
-//     handleStripeCheckout(selectedDate, seatCount);
-//   }
+  //   function handlePayment() {
+  //     if (seatsLeft <= 0) {
+  //       alert("Sorry, this dinner is sold out.");
+  //       return;
+  //     }
+
+  //     if (seatCount > seatsLeft) {
+  //       alert(`Only ${seatsLeft} seats left for this date.`);
+  //       return;
+  //     }
+
+  //     handleStripeCheckout(selectedDate, seatCount);
+  //   }
 
   return (
+    <>
+    <header className="navbar">
+  <div className="brand-header">
+    <img src="/logo.png" alt="Atithie" className="logo-nav" />
+
+    <div>
+        <h2>Atithie</h2>
+      <p className="brand-kicker">A Soulful Maharashtrian Supper Club</p>
+      
+    </div>
+  </div>
+</header>
     <main className="landing-page">
       <section className="hero">
         <div className="hero-content">
-          <p className="eyebrow">Maharashtrian Home-Style Supper Club</p>
+            {/* <img src="/logo.png" alt="Atithie Supper Club" className="logo" />
+          
 
-          <h1>Atithie Sydney</h1>
+          <h1>Atithie</h1>
+          <p className="eyebrow">A Soulful Maharashtrian Supper Club</p> */}
 
-          <p className="quote">अतिथिदेवो भव — The guest is God</p>
+          {/* <p className="quote">अतिथिदेवो भव — The guest is God</p> */}
 
           <p className="hero-subtitle">
             A small, intimate, home-hosted dining experience celebrating
@@ -45,86 +73,84 @@ export default function Home() {
           </div>
 
           <div className="hero-details">
-  <div>
-    <span>⏰ Time</span>
-    <strong>5:30 PM – 9:00 PM</strong>
-  </div>
+            <div>
+              <span>⏰ Time</span>
+              <strong>5:30 PM – 9:00 PM</strong>
+            </div>
 
-  <div>
-    <span>💰 Contribution</span>
-    <strong>$65 / adult • $30 / kid</strong>
-  </div>
+            <div>
+              <span>💰 Contribution</span>
+              <strong>$65 / adult • $30 / kid</strong>
+            </div>
 
-  <div>
-    <span>👥 Seats</span>
-    <strong>Only 10 guests</strong>
-  </div>
+            <div>
+              <span>👥 Seats</span>
+              <strong>Only 10 guests</strong>
+            </div>
 
-  <div>
-    <span>🍽️ Experience</span>
-    <strong>5 curated courses</strong>
-  </div>
-</div>
+            <div>
+              <span>🍽️ Experience</span>
+              <strong>5 curated courses</strong>
+            </div>
+          </div>
 
-<div className="about-inline">
-  <p className="section-label">About Us</p>
+          <div className="about-inline">
+            <p className="section-label">About Us</p>
 
-  <h3>What is Atithie?</h3>
+            <h3>What is Atithie?</h3>
 
-  <p>
-    Atithie is a small, intimate Maharashtrian home-style supper club — a curated
-    dining experience hosted inside our home.
-  </p>
+            <p>
+              Atithie is a small, intimate Maharashtrian home-style supper club
+              — a curated dining experience hosted inside our home.
+            </p>
 
-  <p>
-    It is not a restaurant or commercial dining space, but a cultural and
-    culinary experience where food, stories, and traditions come together
-    around one shared table.
-  </p>
+            <p>
+              It is not a restaurant or commercial dining space, but a cultural
+              and culinary experience where food, stories, and traditions come
+              together around one shared table.
+            </p>
 
-  <p className="highlight">
-    Only 10 guests. One table. One experience.
-  </p>
-</div>
+            <p className="highlight">
+              Only 10 guests. One table. One experience.
+            </p>
+          </div>
 
-<div className="about-inline">
-  <p className="section-label">The Concept</p>
+          <div className="about-inline">
+            <p className="section-label">The Concept</p>
 
-  <h3>What is a Supper Club?</h3>
+            <h3>What is a Supper Club?</h3>
 
-  <p>
-    A supper club is a small, private dining experience hosted by passionate
-    home cooks. Guests book seats for a themed meal focused on one culture,
-    cuisine, and story.
-  </p>
+            <p>
+              A supper club is a small, private dining experience hosted by
+              passionate home cooks. Guests book seats for a themed meal focused
+              on one culture, cuisine, and story.
+            </p>
 
-  <p>
-    It brings people together around one shared table for food, conversation,
-    and community.
-  </p>
-</div>
+            <p>
+              It brings people together around one shared table for food,
+              conversation, and community.
+            </p>
+          </div>
 
-<div className="about-inline">
-  <p className="section-label">Our Promise</p>
+          <div className="about-inline">
+            <p className="section-label">Our Promise</p>
 
-  <h3>What makes Atithie special?</h3>
+            <h3>What makes Atithie special?</h3>
 
-  <p>
-    Atithie celebrates Maharashtra through regional flavours, gharghuti cooking
-    methods, seasonal ingredients, and stories behind every dish.
-  </p>
+            <p>
+              Atithie celebrates Maharashtra through regional flavours,
+              gharghuti cooking methods, seasonal ingredients, and stories
+              behind every dish.
+            </p>
 
-  <div className="mini-feature-list">
-    <span>5 culinary regions</span>
-    <span>Gharghuti methods</span>
-    <span>Seasonal ingredients</span>
-    <span>Pangat-style warmth</span>
-  </div>
-</div>
+            <div className="mini-feature-list">
+              <span>5 culinary regions</span>
+              <span>Gharghuti methods</span>
+              <span>Seasonal ingredients</span>
+              <span>Pangat-style warmth</span>
+            </div>
+          </div>
         </div>
-
-        
-       
 
         <div className="booking-card">
           <p className="tag">Book Your Experience</p>
@@ -137,23 +163,28 @@ export default function Home() {
           </p>
 
           <label className="label">Choose your date</label>
-           <select
-    className="date-select"
-    value={selectedDate}
-    onChange={(e) => setSelectedDate(e.target.value)}
-  >
-    {DINNER_DATES.map((date) => (
-      <option key={date} value={date}>
-        Saturday, {date}
-      </option>
-    ))}
-  </select>
+          <select
+            className="date-select"
+            value={selectedEvent?.id || ""}
+            onChange={(e) => {
+              const event = events.find((ev) => ev.id === e.target.value);
+              setSelectedEvent(event);
+            }}
+          >
+            {events.map((ev) => (
+              <option key={ev.id} value={ev.id}>
+                Saturday, {ev.date}
+              </option>
+            ))}
+          </select>
 
-  {seatsLeft > 0 && seatsLeft <= 8 && (
-  <p className="urgency-text">
-    🔥 Only {seatsLeft} seats left for this date
-  </p>
-)}
+          {seatsLeft > 0 && seatsLeft <= 8 && (
+            <p className="urgency-text">
+              🔥 Only {seatsLeft} seats left for this date
+            </p>
+          )}
+            <p className="tag">Experience of this Supper Club</p>
+          <h2>{selectedEvent?.experience}</h2>
 
           {/* <label className="label">Number of seats</label>
           <select
@@ -192,12 +223,12 @@ export default function Home() {
             {seatsLeft <= 0 ? "Sold Out" : "Book Your Seat"}
           </button>*/}
 
-           <BookingForm
-  selectedDate={selectedDate}
-  seatsLeft={seatsLeft}
-  loading={loading}
-/>
-        </div> 
+          <BookingForm
+            selectedDate={selectedEvent?.date}
+            seatsLeft={seatsLeft}
+            loading={loading}
+          />
+        </div>
       </section>
 
       {/* <section className="content-section">
@@ -273,5 +304,7 @@ export default function Home() {
         </div>
       </section> */}
     </main>
+    </>
   );
+
 }

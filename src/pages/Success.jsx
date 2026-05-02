@@ -8,6 +8,8 @@ export default function Success() {
     <div className="page">
       <div className="booking-card">
         <h1>🎉 Booking Confirmed</h1>
+        <img src="/logo.png" alt="Atithie" className="logo" />
+<h2>Your booking is confirmed 🍽️</h2>
 
         <p className="description">
           Your seat has been successfully reserved.
@@ -20,7 +22,7 @@ export default function Success() {
         )}
 
         <p>
-          A confirmation email has been sent to you with all the details.
+          A confirmation email will be sent to you with all the details.
         </p>
 
         <Link to="/">
